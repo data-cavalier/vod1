@@ -14,6 +14,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.stream.IntStream;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -37,6 +39,7 @@ public class VideoDaoTest {
 
   @After
   public void tearDown() throws Exception {
+    //do nothing for now
   }
 
   @Test
@@ -49,7 +52,7 @@ public class VideoDaoTest {
     assertThat(videoDao.findById(video.getId())).isPresent();
     assertThat(videoDao.findById(video.getId()).get().getDescription()).isEqualTo(video.getDescription());
     assertThat(videoDao.findById(video.getId()).get().getDownloadUrl()).isEqualTo(video.getDownloadUrl());
-    assertThat(videoDao.findById(video.getId()).get().getCreationDate()).isNull();
+    assertThat(videoDao.findById(video.getId()).get().getCreationDate()).isNotNull();
   }
 
   @Test
@@ -60,5 +63,20 @@ public class VideoDaoTest {
     videoDao.save(video);
     assertThat(video.getId()).isNotNull();
     assertThat(videoDao.findById(video.getId() + 1)).isNotPresent();
+  }
+
+  @Test
+  public void list_and_pagination() {
+    IntStream.range(0, 9).forEach(
+        index -> {
+          Video video = new Video();
+          video.setDescription(faker.superhero().name());
+          video.setDownloadUrl(faker.numerify("https://acme.com/###"));
+          videoDao.save(video);
+        }
+    );
+
+    assertThat(videoDao.list(0, 5).size()).isEqualTo(5);
+    assertThat(videoDao.list(5, 10).size()).isEqualTo(4);
   }
 }
