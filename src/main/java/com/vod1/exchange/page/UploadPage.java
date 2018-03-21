@@ -1,6 +1,9 @@
 package com.vod1.exchange.page;
 
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
+import com.vod1.exchange.service.VideoService;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -31,6 +34,9 @@ public class UploadPage extends AbstractPage {
   private static final int MAX_FILE_SIZE = 1024 * 1024 * 40; // 40MB
   private static final int MAX_REQUEST_SIZE = 1024 * 1024 * 50; // 50MB
 
+  @Inject
+  private VideoService videoService;
+
   @Override
   protected String getTemplateFile(HttpServletRequest req) {
     return "velocity/pages/upload.vm";
@@ -49,11 +55,62 @@ public class UploadPage extends AbstractPage {
     }
     doFileUpload(req);
 
-    // redirects client to message page
+    // redirects client to list page
     resp.sendRedirect(req.getContextPath());
   }
 
   private void doFileUpload(HttpServletRequest req) {
+    ServletFileUpload upload = prepareFileUpload();
+    String uploadPath = prepareUploadPath();
+
+    try {
+      // parses the request's content to extract file data
+      @SuppressWarnings("unchecked")
+      List<FileItem> formItems = upload.parseRequest(req);
+
+      if (formItems != null && formItems.size() > 0) {
+        // iterates over form's fields
+        for (FileItem item : formItems) {
+          // processes only fields that are not form fields
+          if (!item.isFormField()) {
+            saveUploadFile(uploadPath, item);
+          }
+        }
+      }
+    } catch (Exception ex) {
+      req.setAttribute("message",
+                       "There was an error: " + ex.getMessage());
+    }
+  }
+
+  private void saveUploadFile(String uploadPath, FileItem item) throws Exception {
+    String fileName = new File(item.getName()).getName();
+    String filePath = uploadPath + File.separator + fileName;
+    File storeFile = new File(filePath);
+
+    // saves the file on disk
+    item.write(storeFile);
+    log.info("save to upload file {}", storeFile.getAbsolutePath());
+    videoService.saveVideo(storeFile);
+    //clean up app server's upload dir after saved
+    storeFile.delete();
+  }
+
+  private String prepareUploadPath() {
+    // constructs the directory path to store upload file
+    // this path is relative to application's directory
+    String uploadPath = getServletContext().getRealPath("")
+                        + File.separator + UPLOAD_DIRECTORY;
+
+    // creates the directory if it does not exist
+    File uploadDir = new File(uploadPath);
+    if (!uploadDir.exists()) {
+      uploadDir.mkdir();
+    }
+    return uploadPath;
+  }
+
+  private ServletFileUpload prepareFileUpload() {
     // configures upload settings
     DiskFileItemFactory factory = new DiskFileItemFactory();
     // sets memory threshold - beyond which files are stored in disk
@@ -68,41 +125,6 @@ public class UploadPage extends AbstractPage {
 
     // sets maximum size of request (include file + form data)
     upload.setSizeMax(MAX_REQUEST_SIZE);
-
-    // constructs the directory path to store upload file
-    // this path is relative to application's directory
-    String uploadPath = getServletContext().getRealPath("")
-                        + File.separator + UPLOAD_DIRECTORY;
-
-    // creates the directory if it does not exist
-    File uploadDir = new File(uploadPath);
-    if (!uploadDir.exists()) {
-      uploadDir.mkdir();
-    }
-
-    try {
-      // parses the request's content to extract file data
-      @SuppressWarnings("unchecked")
-      List<FileItem> formItems = upload.parseRequest(req);
-
-      if (formItems != null && formItems.size() > 0) {
-        // iterates over form's fields
-        for (FileItem item : formItems) {
-          // processes only fields that are not form fields
-          if (!item.isFormField()) {
-            String fileName = new File(item.getName()).getName();
-            String filePath = uploadPath + File.separator + fileName;
-            File storeFile = new File(filePath);
-
-            // saves the file on disk
-            item.write(storeFile);
-            log.info("save to upload file {}", storeFile.getAbsolutePath());
-          }
-        }
-      }
-    } catch (Exception ex) {
-      req.setAttribute("message",
-                       "There was an error: " + ex.getMessage());
-    }
+    return upload;
   }
 }
