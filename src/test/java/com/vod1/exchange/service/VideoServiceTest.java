@@ -47,7 +47,13 @@ public class VideoServiceTest {
 
     videoService.saveVideo(propFile);
 
-    verify(videoOSSUploader,times(1)).uploadVideo(propFile);
-    verify(videoDao,times(1)).save(any());
+    verify(videoOSSUploader, times(1)).uploadVideo(propFile);
+    verify(videoDao, times(1)).save(any());
+  }
+
+  @Test
+  public void list_success() {
+    videoService.list(1, 5);
+    verify(videoDao, times(1)).list(1, 5);
   }
 }
