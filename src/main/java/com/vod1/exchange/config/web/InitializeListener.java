@@ -1,4 +1,4 @@
-package com.vod1.exchange.config;
+package com.vod1.exchange.config.web;
 
 import org.apache.velocity.app.Velocity;
 import org.slf4j.Logger;

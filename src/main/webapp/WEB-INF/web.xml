@@ -24,9 +24,9 @@
 
     <!-- guice listener should run first etc -->
     <listener>
-        <listener-class>com.vod1.exchange.config.VodGuiceServletContextListener</listener-class>
+        <listener-class>com.vod1.exchange.config.web.VodGuiceServletContextListener</listener-class>
     </listener>
     <listener>
-        <listener-class>com.vod1.exchange.config.InitializeListener</listener-class>
+        <listener-class>com.vod1.exchange.config.web.InitializeListener</listener-class>
     </listener>
 </web-app>

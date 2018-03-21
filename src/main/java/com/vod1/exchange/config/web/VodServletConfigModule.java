@@ -1,4 +1,4 @@
-package com.vod1.exchange.config;
+package com.vod1.exchange.config.web;
 
 import com.google.inject.servlet.ServletModule;
 

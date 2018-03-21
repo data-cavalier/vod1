@@ -1,8 +1,11 @@
-package com.vod1.exchange.config;
+package com.vod1.exchange.config.web;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceServletContextListener;
+
+import com.vod1.exchange.config.VodShareModule;
+import com.vod1.exchange.config.jpa.VodPersistModule;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +21,9 @@ public class VodGuiceServletContextListener extends GuiceServletContextListener 
   protected Injector getInjector() {
     try {
       Injector injector = Guice.createInjector(
-          new VodServletConfigModule()
+          new VodServletConfigModule(),
+          new VodShareModule(),
+          new VodPersistModule()
       );
       return injector;
     } catch (Exception e) {
