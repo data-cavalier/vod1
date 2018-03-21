@@ -1,0 +1,32 @@
+#macro( header )
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="vod manager">
+ #if ($pageTitle)
+     <title>$pageTitle - Browse and Play VOD data</title>
+ #else
+     <title>Browse and Play VOD data</title>
+ #end
+
+    <!-- Bootstrap CSS -->
+    <!-- the reason why I don't use CDN is that I'm not sure which file or domain will be blocked in China-->
+    <link href="$contextPath/css/vendor/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div id="body">
+#end
+
+#macro( footer )
+</div>
+<!-- the reason why I don't use CDN is that I'm not sure which file or domain will be blocked in China-->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="$contextPath/js/vendor/jquery-3.2.1.slim.min.js"></script>
+<script src="$contextPath/js/vendor/popper.min.js"></script>
+<script src="$contextPath/js/vendor/bootstrap.min.js"></script>
+</body>
+</html>
+#end
