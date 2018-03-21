@@ -16,8 +16,9 @@
     <!-- Bootstrap CSS -->
     <!-- the reason why I don't use CDN is that I'm not sure which file or domain will be blocked in China-->
     <link href="$contextPath/css/vendor/bootstrap.min.css" rel="stylesheet">
-    <!-- Custom styles for this template -->
     <link href="$contextPath/css/vendor/sticky-footer-navbar.css" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="$contextPath/css/main.css" rel="stylesheet">
 </head>
 <body>
 <header>
@@ -61,6 +62,7 @@
 <script src="$contextPath/js/vendor/jquery-3.2.1.slim.min.js"></script>
 <script src="$contextPath/js/vendor/popper.min.js"></script>
 <script src="$contextPath/js/vendor/bootstrap.min.js"></script>
+<script src="$contextPath/js/main.js"></script>
 </body>
 </html>
 #end
